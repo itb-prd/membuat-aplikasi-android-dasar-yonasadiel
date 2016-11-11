@@ -19,13 +19,15 @@ import android.widget.Toast;
 public class editDialog extends DialogFragment {
     int mNum;
     String mName;
+    String mDate;
 
-    static editDialog newInstance(int num, String name) {
+    static editDialog newInstance(int num, ToDo todo) {
         editDialog f = new editDialog();
 
         Bundle args = new Bundle();
         args.putInt("num",num);
-        args.putString("name",name);
+        args.putString("name",todo.name);
+        args.putString("date",todo.dueDateString);
 
         f.setArguments(args);
         return f;
@@ -37,6 +39,7 @@ public class editDialog extends DialogFragment {
 
         mNum = getArguments().getInt("num");
         mName = getArguments().getString("name");
+        mDate = getArguments().getString("date");
 
     }
 
@@ -52,6 +55,7 @@ public class editDialog extends DialogFragment {
                         final int result = 1;
                         getNewNameIntent.putExtra("Index of ToDoList", mNum);
                         getNewNameIntent.putExtra("Name of ToDoList", mName);
+                        getNewNameIntent.putExtra("Date of ToDoList", mDate);
 
                         getActivity().startActivityForResult(getNewNameIntent, result);
 

@@ -9,4 +9,6 @@
     <string name="add_new_list">Tambah To Do</string>
     <string name="enter_new_title_hint">Masukkan nama baru</string>
     <string name="add_new_list_hint">Masukkan kegiatan baru</string>
+    <string name="add_new_list_due_date">Due Date:</string>
+    <string name="checking_due_date">Click to set Due Date</string>
 </resources>

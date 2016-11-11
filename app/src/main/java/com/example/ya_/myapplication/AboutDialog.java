@@ -19,7 +19,7 @@ public class AboutDialog extends DialogFragment {
         AlertDialog.Builder theDialog = new AlertDialog.Builder(getActivity());
 
         theDialog.setTitle("About");
-        theDialog.setMessage("To Do List v. 1.0.2\nMade by YA_");
+        theDialog.setMessage("To Do List v. 1.3\nMade by YA_");
         theDialog.setPositiveButton("OK", null);
 
         /*return super.onCreateDialog(savedInstanceState);*/

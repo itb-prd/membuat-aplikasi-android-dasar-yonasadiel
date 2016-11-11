@@ -29,17 +29,20 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
-/* 1.0.0 all set
- * 1.0.1 App Name changed from "My Application" to "To Do List"
- *       editScreen EditText intial Text set to last task name
- * 1.0.2 Back Button won't crashed the apps
+/* 1.0 All set
+ * 1.1 App Name changed from "My Application" to "To Do List"
+ *     editScreen EditText intial Text set to last task name
+ * 1.2 Back Button won't crashed the apps
+ * 1.3 Due Date Added
  *
  */
 
 public class MainActivity extends AppCompatActivity {
 
-    public ArrayList<String> ToDoListContent = new ArrayList<>();
+    public ArrayList<ToDo> ToDoListContent = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +71,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void displayList() {
-        ListAdapter theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ToDoListContent);
+        /*
+        ToDoListContent.sort(new Comparator<ToDo>() {
+            @Override
+            public int compare(ToDo o1, ToDo o2) {
+                if (o1.dueDate.before(o2.dueDate)) {
+                    return -1;
+                } else if (o1.dueDate.after(o2.dueDate)) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return false;
+            }
+        });*/
+
+        /**********SORTING ToDoList ************/
+        for (int i=0; i<ToDoListContent.size(); i++) {
+            for (int j=i+1; j<ToDoListContent.size(); j++) {
+                if (ToDoListContent.get(i).dueDate.after(ToDoListContent.get(j).dueDate)) {
+                    Collections.swap(ToDoListContent,i,j);
+                }
+            }
+        }
+
+        /*********Viewing************/
+        ListAdapter theAdapter = new taskAdapter(this, ToDoListContent);
 
         ListView theListView = (ListView) findViewById(R.id.ToDoListView);
 
@@ -120,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readFromFile() {
-        String filename = "todolistfile.dat";
+        String filename = "todolistfile.txt";
 
         try {
             FileInputStream ins = new FileInputStream(new File(getFilesDir(), filename));
@@ -129,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
             String todo;
 
             while((todo = br.readLine()) != null) {
-                ToDoListContent.add(todo);
+                ToDo newToDo = new ToDo(todo,br.readLine());
+                ToDoListContent.add(newToDo);
             }
             br.close();
         } catch (Exception e){
@@ -138,12 +171,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveIntoFile() {
-        String filename = "todolistfile.dat";
+        String filename = "todolistfile.txt";
 
         try {
             PrintWriter pw = new PrintWriter(new FileOutputStream(new File(getFilesDir(), filename)));
-            for (String todo: ToDoListContent) {
-                pw.println(todo);
+            for (ToDo todo: ToDoListContent) {
+                pw.println(todo.name);
+                pw.println(todo.dueDateString);
             }
             pw.close();
         } catch (Exception e){
@@ -156,16 +190,23 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && data != null) {
+            // Edit a Task
             int index = data.getExtras().getInt("Index of ToDoList");
-            ToDoListContent.set(index,data.getExtras().getString("New Name"));
-            displayList();
+
+            ToDo newToDo = new ToDo(data.getExtras().getString("New Name"),data.getExtras().getString("New Due Date"));
+            ToDoListContent.set(index,newToDo);
+
         } else if (requestCode == 2 && data != null) {
-            ToDoListContent.add(data.getExtras().getString("New Task"));
-            displayList();
+            // Add a new Task
+            ToDo newToDo = new ToDo(data.getExtras().getString("New Task Name"),data.getExtras().getString("New Task Due Date"));
+            ToDoListContent.add(newToDo);
+
         } else if (requestCode == 3 && data != null) {
+            //delete a Task
             ToDoListContent.remove(data.getExtras().getInt("Index of ToDoList"));
-            displayList();
         }
+
+        displayList();
 
     }
 

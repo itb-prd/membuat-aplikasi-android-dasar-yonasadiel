@@ -36,6 +36,14 @@
             android:name=".deleteScreen" >
         </activity>
 
+        <activity
+            android:name=".dateScreen" >
+        </activity>
+
+        <activity
+            android:name=".timeScreen" >
+        </activity>
+
     </application>
 
 </manifest>
